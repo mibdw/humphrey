@@ -1,0 +1,259 @@
+#humphrey-weekly {
+	flex: 1;
+	display: flex;
+	overflow: hidden;
+	position: relative;
+	
+	.week {
+		flex: 1;
+		list-style-type: none;
+		display: flex;
+		flex-direction: row;
+		position: absolute;
+		width: 100%;
+		left: 0;
+		bottom: 0;
+		top: 0;
+		transition: left .4s;
+
+		&.old-left { left: -100% }
+		&.old-right { left: 100% }
+		&.new-left { left: -100% }
+		&.new-right { left: 100% }
+
+		.day {
+			flex: 1;
+			border-right: 1px solid @main-line;
+			transition: flex-grow .3s;
+			cursor: pointer;	
+			min-width: 0;
+
+			.day-number {
+				text-align: center;
+				font-size: 3em;
+				line-height: 1em;
+				font-weight: 800;
+				padding: .3em 0 0;
+				color: @main-vague;
+				pointer-events: none;
+
+				.sat-sun {
+					height: 30px;
+
+					.saturday, .sunday {
+						font-size: .5em;
+						line-height: 1em;
+					}
+
+					.saturday {
+						position: relative;
+						top: -.8em;
+						left: .1em;
+					}
+
+					.sunday {
+						position: relative;
+						top: .1em;
+						left: -.1em;
+					}
+
+					.seperator {
+						font-weight: 300;
+						line-height: .1em;
+						color: @main-line;
+					}
+				}
+			}
+
+			.day-name {
+				text-align: center;
+				text-transform: uppercase;
+				padding: .1em 0 0;
+				color: @main-vague;
+				pointer-events: none;
+			}
+
+			&:hover {
+				.day-name, .day-number { color: @main-text; }
+
+				.event-container .singles .event-title {
+					color: @main-text;
+				}
+			}
+			
+			&.active {
+				flex-grow: 2.2;
+				background-color: @lightyellow;
+
+				.day-name, .day-number { color: @main-text; }
+				.day-number .seperator { color: lighten(@main-text, 60%)}
+
+				.event-container .singles .event-title {
+					color: @main-text;
+				}
+			}
+
+			&.today {
+				background-color: lighten(@royalblue, 45%);
+
+				.day-number {
+					border-top: .15em solid @royalblue;
+					padding-top: .15em;
+				}
+			}
+		}	
+	}
+
+	.loading {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background-color: fade(@main-back, 80%);
+		pointer-events: none;
+		opacity: 0;
+		transition: opacity .2s;
+
+		&.active {
+			opacity: 1;
+			pointer-events: auto;
+		}
+
+		.spinner {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			margin: -1em 0 0 -1em;
+		}
+	}
+}
+
+.event-container {
+	margin-top: 1em;
+
+	ul {
+		list-style-type: none;
+
+		.event {
+			color: @main-text;
+			font-size: .8em;
+
+			.event-title {
+				display: block;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				pointer-events: none;
+			}
+		}
+
+		&.alldays {
+			position: relative;
+			width: 100%;
+
+ 
+			.event {
+				color: @main-back;
+				padding: 0 .5em;
+				line-height: 24px;
+				position: absolute;
+				left: .3em;
+				right: .3em;
+				
+				& > * { pointer-events: none }
+
+				&.tomorrow {
+					right: -1px;
+					padding: 0 .35em;
+				}
+
+				&.yesterday {
+					left: -1px;
+					padding-left: .7em;
+
+					.event-title { display: none; }
+
+					&:after { content: '\u2000'; visibility: hidden }
+				}
+
+				&.hover {
+					opacity: .8;
+				}
+			}
+
+		}
+
+		&.singles {
+
+
+			.event {
+				padding: .2em .5em .2em 1.2em;
+				text-align: left;
+				position: relative;
+				line-height: 1.3em;
+				border-bottom: 1px solid @main-line;
+			
+				& > * { pointer-events: none }
+
+				i {
+					position: absolute;
+					left: 0;
+					top: -1px;
+					bottom: -1px;
+					width: .7em;
+					height: auto;
+					border-radius: 0;
+				}
+
+				.event-title {
+					font-weight: 600;
+					display: block;
+					width: 100%;
+					white-space: nowrap;
+					overflow: hidden;
+					text-overflow: ellipsis;
+					color: lighten(@main-text, 40%);
+				}
+
+				.event-time {		
+					color: lighten(@main-text, 50%);
+					margin-right: .4em;
+					white-space: nowrap;
+				}
+
+				.event-weekend {		
+					color: lighten(@main-text, 50%);
+					text-transform: uppercase;
+					font-size: .7em;
+					vertical-align: text-top;
+					text-decoration: underline;
+				}
+
+				&:hover {
+					background-color: fade(@main-back, 35%);
+
+					.event-title {
+
+						text-decoration: underline;
+					}
+				}
+
+				&:first-child {
+					border-top: 1px solid @main-line;
+				}
+			}
+		}
+	}
+
+	&.mon .alldays .event.yesterday {
+		padding-left: .8em; 
+		
+		&:after { display: none; }
+		.event-title { display: block; } 
+	}
+}
+
+#humphrey-weekly .day.today .event-container .event {
+	border-color: lighten(@royalblue, 40%);
+}

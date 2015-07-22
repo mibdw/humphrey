@@ -1,0 +1,142 @@
+#humphrey-minical {
+
+	.fc-scroller { height: auto !important; }
+
+	.fc-view {
+		padding: .9em 2em;		
+
+		& > table { width: 100%; }
+	}
+
+	.fc-toolbar {
+		height: @header-height;
+		border-bottom: 1px solid @side-hover;
+		line-height: @header-height;
+
+		.fc-center { 
+			text-align: center; 
+			
+			h2 {
+				display: inline;
+				font-size: .8em;
+				font-weight: 300;
+				text-transform: uppercase;
+				letter-spacing: 2px;
+			}
+
+			.fc-button {
+				display: inline-block;
+				border-width: 0;
+				background-color: transparent;
+				color: @side-vague;
+				font-weight: bold;
+				font-size: 1.8em;
+				padding: 0 .5em;
+				cursor: pointer;
+				position: relative;
+				top: .15em;
+
+				&:hover {
+					color: @side-text;
+				}
+
+				&.fc-prev-button { padding-left: 0; }
+				&.fc-next-button { padding-right: 0; }
+			}
+		}
+	}
+
+	.fc-row table {
+		width: 100%;
+		border-collapse: collapse;
+
+		thead {
+
+			td, th {
+				font-size: .8em;
+				width: 100% / 7;
+				text-align: center;
+				padding: .35em 0;
+
+				&.fc-other-month, &.fc-day-header {
+					color: @side-vague;
+				}
+
+				&.fc-state-highlight {
+					padding-bottom: 0;
+
+					span {
+						display: block;
+						border-bottom: .35em solid @royalblue;
+					}
+				}
+			}
+
+			.display-week {
+
+				td {
+					background-color: @side-line;
+				}
+			}
+		}
+	}
+
+	.fc-content-skeleton:hover {
+		cursor: pointer;
+
+		td { background-color: @side-hover; }
+	}
+}
+
+#humphrey-filter {
+	border-top: 1px solid @side-hover;
+	padding: 1.5em 0;
+	list-style-type: none;
+
+	.category {
+
+		label {
+			color: darken(@side-text, 40%);
+			font-size: .8em;
+			padding-left: 3em;
+
+			&:before {
+				width: 1.3em;
+				height: 1.3em;
+				background-color: @side-line;
+				margin-right: .4em;
+			}
+
+			&:after {
+				border-color: @side-text;
+			}
+
+			i {
+				font-size: .9em;
+				position: relative;
+				top: .1em;
+				margin-right: .2em;
+				border: 1px solid @side-line;
+			}
+			
+			&:hover {
+				background-color: @side-hover;
+				color: @side-text;
+			}
+
+			&.active { color: @side-text; }
+		}
+
+	}
+
+	.clear-filter a {
+		font-size: .8em;
+		color: @side-vague;
+		text-decoration: none;
+		margin-left: 2.8em;
+
+		&:hover {
+			color: @side-text;
+		}
+	}
+}

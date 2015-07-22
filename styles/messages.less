@@ -1,0 +1,49 @@
+.humphrey-message {
+	position: fixed;
+	width: 100%;
+	top: -2em;
+	left: 0;
+	padding: .5em 2em .5em 1em;
+	pointer-events: none;
+	opacity: 0;
+	transition: opacity .25s, top .25s;
+	
+	&.active {
+		top: 0;
+		opacity: 1;
+		pointer-events: auto;
+	}
+
+	.close {
+		position: absolute;
+		right: .5em;
+		top: .3em;
+		font-weight: 900;
+		font-size: 2em;
+		line-height: .5em;
+		text-decoration: none;
+
+		&:hover { color: @error-text; }
+	}
+
+	&.error {
+		background-color: @error-back;
+		color: @error-text;
+
+		.close { color: darken(@error-back, 10%); }
+	}
+
+	&.warning {
+		background-color: @warning-back;
+		color: @warning-text;
+		
+		.close { color: darken(@warning-back, 10%); }
+	}
+
+	&.success {
+		background-color: @success-back;
+		color: @success-text;
+
+		.close { color: darken(@success-back, 10%); }
+	}
+}
