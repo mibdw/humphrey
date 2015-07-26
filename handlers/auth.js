@@ -2,6 +2,7 @@ passport = require('passport');
 
 module.exports = {
 	login: function (req, res) {
+	
 		passport.authenticate('local', function (err, user, info) {
 			if (err) return console.log(err);
 			if (!user) return res.send(info);
@@ -15,8 +16,10 @@ module.exports = {
 					role: user.role
 				};
 
-				req.session.humphrey = person;
-				return res.send(person);
+				req.session['humphrey'] = person;
+				req.session.save(function () {
+					return res.send(person);
+				});
 			});
 		})(req, res);
 	},
@@ -24,7 +27,11 @@ module.exports = {
 		req.logout();
 		res.send('logout');
 	},
+	elbowbump: function (req, res) {
+		res.json(req.session.humphrey);
+	},
 	handshake: function (req) {
+		console.log(new Date() + ' Connection: ' + req.handshake.address.address +' (' + req.socket.id + ')');
 		if (req.session.passport.user) req.io.emit('fistbump', req.session.humphrey);
 	}
 };

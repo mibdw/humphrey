@@ -32,6 +32,7 @@ app.get('/', function (req, res) { res.render(__dirname + '/views/main'); });
 
 app.post('/login', require('./handlers/auth').login);
 app.get('/logout', require('./handlers/auth').logout);
+app.get('/elbowbump', require('./handlers/auth').elbowbump);
 
 app.io.route('auth', require('./handlers/auth'));
 app.io.route('events', require('./handlers/events'));

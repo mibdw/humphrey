@@ -39,8 +39,10 @@ module.exports = {
 			.populate('category')
 			.exec(function (err, eventData) {
 				if (err) console.log(err);	
-
+			
 				req.io.respond(eventData);
+				req.io.broadcast('highfive', { user: req.session.humphrey, ev: eventData, what: 'create' });
+				req.io.emit('message', { m: 'create', o: 'success', ev: eventData });
 			});
 		});
 
@@ -52,14 +54,17 @@ module.exports = {
 		Event.findByIdAndUpdate(ev._id, ev, function (err, eventData) {
 			if (err) console.log(err);
 			req.io.respond(eventData);
-			req.io.emit('message', { m: 'Succesfully updated event', o: 'success' });
+			req.io.broadcast('highfive', { user: req.session.humphrey, ev: eventData, what: 'update' });
+			req.io.emit('message', { m: 'update', o: 'success', ev: eventData });
 		})
 	},
 	remove: function (req) {
+
 		Event.findByIdAndRemove(req.data._id, function (err, eventData) {
 			if (err) console.log(err);
 			req.io.respond('success');
-			req.io.emit('message', { m: 'Succesfully removed event', o: 'success' });
+			req.io.broadcast('highfive', { user: req.session.humphrey, ev: req.data, what: 'remove' });
+			req.io.emit('message', { m: 'remove', o: 'success', ev: req.data });
 		})
 	}
 };

@@ -20,6 +20,7 @@ var Humphrey = React.createClass({displayName: "Humphrey",
 		return {
 			date: now,
 			events: [],
+			queue: [],
 			popup: { a: false, p: false },
 			user: false,
 			message: { a: false, m: false, o: false },
@@ -34,9 +35,9 @@ var Humphrey = React.createClass({displayName: "Humphrey",
 		self.fetchCategories();
 		self.handleDate(now);
 
-		$('#humphrey-body').css({ 'min-height': window.innerHeight });
+		$('#humphrey-wrapper').css({ 'min-height': window.innerHeight });
 		$(window).resize(function () {
-			$('#humphrey-body').css({ 'min-height': window.innerHeight });
+			$('#humphrey-wrapper').css({ 'min-height': window.innerHeight });
 		});
 
 		document.title = moment(this.state.date).startOf('isoWeek').format('D') + '\u2013' + moment(this.state.date).endOf('isoWeek').format('D MMMM YYYY') + ' \u00AB Humphrey';
@@ -45,18 +46,71 @@ var Humphrey = React.createClass({displayName: "Humphrey",
 		socket.on('fistbump', function (data) { self.setState({ user: data }) });
 		
 		socket.on('message', function (data) { 
-			self.setState({ message: { a: true, m: data.m, o: data.o }}, function () {
+			var msg;
+			if (data.m == 'create') msg = (React.createElement("span", null, "Event ", React.createElement("em", null, data.ev.title), " has succesfully been created.")); 
+			if (data.m == 'update') msg = (React.createElement("span", null, "Event ", React.createElement("em", null, data.ev.title), " has succesfully been updated."));
+			if (data.m == 'remove') msg = (React.createElement("span", null, "Event ", React.createElement("em", null, data.ev.title), " has succesfully been removed."));
+
+			self.setState({ message: { a: true, m: msg, o: data.o }}, function () {
 				if (data.o == 'success') {
 					setTimeout(function () { self.cancelMessage()	}, 5000)
 				}
 			});
 		});
+
+		socket.on('highfive', function (data) {
+			if (moment(data.ev.start).isSame(self.state.date, 'isoWeek')) {
+				var queue = self.state.queue, found = false, creations = [], updates = [], removals = [], createString, updateString, removeString;
+
+				found = _.find(queue, function (q) { return q.id == data.id && q.what == 'create' });
+
+				if (found && data.what == 'remove') {
+					queue = _.reject(queue, function (q) { return q.id == found.id });
+				} else {
+					queue.push(data);
+				}
+
+				if (queue.length > 0) {
+
+					queue.forEach(function (q) {
+						if (q.what == 'create') creations.push(q);
+						if (q.what == 'update') updates.push(q);
+						if (q.what == 'remove') removals.push(q);
+					});
+
+					if (creations.length > 0) createString = ( React.createElement("span", null, React.createElement("strong", null, creations.length), " ", creations.length > 1 ? 'events have' : 'event has', " been created. ") );
+
+					if (updates.length > 0) updateString = ( React.createElement("span", null, React.createElement("strong", null, updates.length), " ", updates.length > 1 ? 'events have' : 'event has', " been updated. ") );
+
+					if (removals.length > 0) removeString = ( React.createElement("span", null, React.createElement("strong", null, removals.length), " ", removals.length > 1 ? 'events have' : 'event has', " been removed. ") );
+
+					var msg = (
+						React.createElement("span", null, 
+							createString, 
+							updateString, 
+							removeString, 
+							React.createElement("a", {href: "", onClick: self.refreshEvents}, "Refresh")
+						)
+					);
+
+					self.setState({ queue: queue, message: { a: true, m: msg, o: 'warning' }})
+				} else {
+					self.cancelMessage();
+				}
+			}
+		});
 	},
 	fetchCategories: function () {
-		var self = this;
+		var self = this, x = self.state.categories.length;
 		socket.emit('categories:list', function (categoryList) {
 			var catList = _.sortBy(categoryList, 'name');
-			self.setState({ categories: catList });
+			self.setState({ categories: catList }, function () {
+				if (x > 0) {
+					self.fetchEvents(self.state.date, function (newEvents) {
+						self.setState({ loading: false, events: newEvents });
+					});
+				}
+			});
 		});
 	},
 	fetchEvents: function (week, callback) {
@@ -71,6 +125,14 @@ var Humphrey = React.createClass({displayName: "Humphrey",
 
 				setTimeout(function () { callback(data); }, 300);
 			});
+		})
+	},
+	refreshEvents: function (e) {
+		e.preventDefault();
+		var self = this;
+		self.fetchEvents(self.state.date, function (newEvents) {
+			self.cancelMessage();
+			self.setState({ loading: false, events: newEvents}); 
 		})
 	},
 	handleEventChange: function (ev) {
@@ -115,8 +177,12 @@ var Humphrey = React.createClass({displayName: "Humphrey",
 							self.setState({ message: { a: true, m: data.message, o: 'error'}, loading: false });
 						} else {
 							self.cancelPopup();
-							console.log(data);
-							self.setState({ user: data, loading: false });
+							self.setState({ user: data, loading: false }, function () {
+								$.ajax({
+									url: '/elbowbump',
+									success: function (data) { console.log(data) }
+								});
+							});
 						}
 					}
 				});
@@ -125,12 +191,15 @@ var Humphrey = React.createClass({displayName: "Humphrey",
 	},
 	cancelPopup: function () {
 		var self = this, popup = this.state.popup;
-			if (this.state.message.o != 'success') self.cancelMessage();	
 		popup.a = false;
 		self.setState({ popup: popup }, function () {
 			setTimeout(function () {
 				popup.p = false;
-				self.setState({ popup: popup });
+				self.setState({ popup: popup }, function () {
+					if (self.state.message.o != 'success') {
+						self.cancelMessage();	
+					}
+				});
 			}, 1);
 		});
 	},
@@ -138,12 +207,15 @@ var Humphrey = React.createClass({displayName: "Humphrey",
 		var self = this, popup = this.state.popup;
 		e.preventDefault();
 		if (e.target.id == 'humphrey-jacket' || e.target.id == 'close-popup') {
-			self.cancelMessage();	
 			popup.a = false;
 			self.setState({ popup: popup }, function () {
 				setTimeout(function () {
 					popup.p = false;
-					self.setState({ popup: popup, detail: false });
+					self.setState({ popup: popup, detail: false }, function () {
+						if (self.state.message.o != 'success') {
+							self.cancelMessage();	
+						}
+					});
 				}, 251);
 			});
 		} 
@@ -157,7 +229,7 @@ var Humphrey = React.createClass({displayName: "Humphrey",
 			setTimeout(function () {
 				message.m = false;
 				message.o = false;
-				self.setState({ message: message });
+				self.setState({ message: message, queue: [] });
 			}, 251)
 		});
 	},
@@ -219,7 +291,7 @@ var Humphrey = React.createClass({displayName: "Humphrey",
 		}
 
 		return (
-			React.createElement("div", {id: "humphrey-wrapper"}, 
+			React.createElement("div", {id: "humphrey-wrapper", className: this.state.message.a ? 'message' : ''}, 
 				
 				React.createElement(HumphreySidebar, {
 					date: this.state.date, 
@@ -1583,7 +1655,7 @@ module.exports = React.createClass({displayName: "exports",
 		e.preventDefault();
 
 		if (confirm('Are you sure?')) {
-			socket.emit('events:remove', { _id: self.state.detail._id }, function (response) {
+			socket.emit('events:remove', self.state.detail, function (response) {
 				self.setState({ loading: false }, function () {
 					self.props.cancelPopup();
 					self.props.updateEvent(response);

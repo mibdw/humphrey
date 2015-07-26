@@ -1,6 +1,14 @@
 #humphrey-wrapper {
 	display: flex;
 	flex-direction: row;
+	padding-top: 0;
+	transition: padding-top .25s;
+
+	&.message {
+		padding-top: 2.4em;
+
+		#humphrey-jacket { top: 2.4em; }
+	}
 
 	#humphrey-body {
 		flex: 1;

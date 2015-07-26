@@ -7,6 +7,8 @@
 	pointer-events: none;
 	opacity: 0;
 	transition: opacity .25s, top .25s;
+	border-width: 0 0 1px 0;
+	border-style: solid;
 	
 	&.active {
 		top: 0;
@@ -29,6 +31,7 @@
 	&.error {
 		background-color: @error-back;
 		color: @error-text;
+		border-color: darken(@error-back, 10%);
 
 		.close { color: darken(@error-back, 10%); }
 	}
@@ -36,6 +39,11 @@
 	&.warning {
 		background-color: @warning-back;
 		color: @warning-text;
+		border-color: darken(@warning-back, 10%);
+
+		a { 
+			color: @warning-text; 
+		}
 		
 		.close { color: darken(@warning-back, 10%); }
 	}
@@ -43,6 +51,7 @@
 	&.success {
 		background-color: @success-back;
 		color: @success-text;
+		border-color: darken(@success-back, 10%);
 
 		.close { color: darken(@success-back, 10%); }
 	}

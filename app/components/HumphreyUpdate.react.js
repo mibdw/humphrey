@@ -165,7 +165,7 @@ module.exports = React.createClass({
 		e.preventDefault();
 
 		if (confirm('Are you sure?')) {
-			socket.emit('events:remove', { _id: self.state.detail._id }, function (response) {
+			socket.emit('events:remove', self.state.detail, function (response) {
 				self.setState({ loading: false }, function () {
 					self.props.cancelPopup();
 					self.props.updateEvent(response);
