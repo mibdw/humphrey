@@ -143,6 +143,7 @@ var Humphrey = React.createClass({displayName: "Humphrey",
 	},
 	handleDate: function (newDate) {
 		var self = this;
+		if (moment(newDate).isoWeekday() == 1) newDate = moment(newDate).add(1, 'days');
 		self.fetchEvents(newDate, function (newEvents) {
 			self.setState({ loading: false, date: newDate, events: newEvents }, function () {
 				document.title = moment(newDate).startOf('isoWeek').format('D') + '\u2013' + moment(newDate).endOf('isoWeek').format('D MMMM YYYY') + ' \u00AB Humphrey';
