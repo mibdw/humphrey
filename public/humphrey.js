@@ -48,6 +48,11 @@ var Humphrey = React.createClass({displayName: "Humphrey",
 
 		document.title = moment(this.state.date).startOf('isoWeek').format('D') + '\u2013' + moment(this.state.date).endOf('isoWeek').format('D MMMM YYYY') + ' \u00AB Humphrey';
 
+		$(window).on('popstate', function (e) {
+			var pop = moment(e.originalEvent.target.location.pathname, '/YYYY/W').add(1, 'days');
+			self.handleDate(pop)
+		});
+	
 		socket.emit('auth:handshake');
 		socket.on('fistbump', function (data) { self.setState({ user: data }) });
 		
