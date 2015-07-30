@@ -2,6 +2,7 @@ var React = require('react'),
 	$ = require('jquery'),
 	_ = require('underscore'),
 	moment = require('moment'),
+	cookie = require('react-cookie'),
 	socket = io.connect();
 
 var HumphreyBody = require('./components/HumphreyBody.react'),
@@ -115,7 +116,11 @@ var Humphrey = React.createClass({
 		socket.emit('categories:list', function (categoryList) {
 			var catList = _.sortBy(categoryList, 'name');
 			self.setState({ categories: catList }, function () {
+				var cookieFilter = cookie.load('catFilter');
+				if (cookieFilter) self.setState({ catFilter: cookieFilter });
+
 				if (x > 0) {
+
 					self.fetchEvents(self.state.date, function (newEvents) {
 						self.setState({ loading: false, events: newEvents });
 					});
@@ -266,7 +271,9 @@ var Humphrey = React.createClass({
 			if (catFilter.length > 0  && catFilter.indexOf(ev.category._id) == -1) ev.visible = false;
 		});
 
-		this.setState({ catFilter: catFilter, events: events });
+		this.setState({ catFilter: catFilter, events: events }, function () {
+			cookie.save('catFilter', cookieFilter);
+		});
 	},
 	render: function () {
 		var HumphreyPopup;
