@@ -2,6 +2,7 @@ var express = require('express.io'),
 	app = express().http().io(),
 	bodyParser = require('body-parser'),
 	cookieParser = require('cookie-parser'),
+	favicon = require('serve-favicon'),
 	mongoose = require('mongoose'),
 	passport = require('passport'),
 	LocalStrategy = require('passport-local').Strategy,
@@ -14,6 +15,7 @@ mongoose.connect('mongodb://localhost/humphrey', function (err) {
 	if (err) console.log('Could not connect to mongodb on localhost');
 });
 
+app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser())

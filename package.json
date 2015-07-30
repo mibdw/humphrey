@@ -22,7 +22,8 @@
     "jquery": "^2.1.4",
     "express-session": "^1.11.3",
     "react-color-picker": "^2.1.9",
-    "react-router": "^0.13.3"
+    "react-router": "^0.13.3",
+    "serve-favicon": "^2.3.0"
   },
   "devDependencies": {
     "gulp": "^3.8.11",
