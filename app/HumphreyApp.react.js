@@ -11,9 +11,13 @@ var HumphreyBody = require('./components/HumphreyBody.react'),
 	HumphreyCreate = require('./components/HumphreyCreate.react'),
 	HumphreySettings = require('./components/HumphreySettings.react');
 
+var Router = require('react-router'),
+	Route = Router.Route;
+
 var Humphrey = React.createClass({
 	getInitialState: function () {
 		var now = moment();
+		if (this.props.params.week) now = moment().year(this.props.params.year).isoWeek(this.props.params.week);
 		now['position'] = 0;
 
 		return {
@@ -31,6 +35,8 @@ var Humphrey = React.createClass({
 	},
 	componentDidMount: function () {
 		var self = this, now = moment();
+		if (this.props.params.week) now = moment().year(this.props.params.year).isoWeek(this.props.params.week);
+
 		self.fetchCategories();
 		self.handleDate(now);
 
@@ -141,7 +147,11 @@ var Humphrey = React.createClass({
 		})
 	},
 	handleDate: function (newDate) {
-		var self = this;
+		var self = this,
+			url = moment(newDate).format('/YYYY/W');
+
+		window.history.pushState(self.props.params, null, url);
+
 		if (moment(newDate).isoWeekday() == 1) newDate = moment(newDate).add(1, 'days');
 		self.fetchEvents(newDate, function (newEvents) {
 			self.setState({ loading: false, date: newDate, events: newEvents }, function () {
@@ -292,7 +302,7 @@ var Humphrey = React.createClass({
 
 		return (
 			<div id='humphrey-wrapper' className={this.state.message.a ? 'message' : ''}>
-				
+
 				<HumphreySidebar
 					date={this.state.date}
 					catFilter={this.state.catFilter}
@@ -319,13 +329,35 @@ var Humphrey = React.createClass({
 				<div className={this.state.message.a ? messageClasses + ' active' : messageClasses}>
 					{HumphreyMessage}
 				</div>
-
 			</div>
 		)
 	}
 });
 
-React.render(
-	<Humphrey />,
-	document.getElementById('humphrey')
+var routes = (
+	<Route handler={HumphreyApp}>
+		<Route path='/' handler={Humphrey} />
+		<Route path='/:year/:week' handler={Humphrey} />
+	</Route>
 );
+
+var RouteHandler = Router.RouteHandler;
+
+var HumphreyApp = React.createClass({
+	render: function () {
+		return (
+			<div>
+				<RouteHandler />
+			</div>
+		)
+	}
+});
+
+Router.run(routes, Router.HistoryLocation, function (Handler) {
+	React.render(<Handler/>, document.getElementById('humphrey'));
+});
+
+// React.render(
+// 	<Humphrey />,
+// 	document.getElementById('humphrey')
+// );

@@ -4,5 +4,6 @@
 
 To do:
 - ~~Socket broadcasting new evenfts~~
+- ~~URL Router~~
 - Save filter in cookies
 - Recurring events

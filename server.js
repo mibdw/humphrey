@@ -29,6 +29,7 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 app.get('/', function (req, res) { res.render(__dirname + '/views/main'); });
+app.get('/:year/:week', function (req, res) { res.render(__dirname + '/views/main'); });
 
 app.post('/login', require('./handlers/auth').login);
 app.get('/logout', require('./handlers/auth').logout);
