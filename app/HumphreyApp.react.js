@@ -272,7 +272,7 @@ var Humphrey = React.createClass({
 		});
 
 		this.setState({ catFilter: catFilter, events: events }, function () {
-			cookie.save('catFilter', cookieFilter);
+			cookie.save('catFilter', catFilter);
 		});
 	},
 	render: function () {
