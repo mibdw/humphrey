@@ -3,8 +3,15 @@ var moment = require('moment'),
 
 module.exports = {
 	fetch: function (req) {
-		var start = moment(req.data).startOf('isoweek').format(),
-			end = moment(req.data).endOf('isoweek').format();
+		var start, end;
+
+		if (req.data.view == 'weekly') {
+			start = moment(req.data.date).startOf('isoweek').format(),
+			end = moment(req.data.date).endOf('isoweek').format();
+		} else if (req.data.view == 'monthly') {
+			start = moment(req.data.date).startOf('month').format(),
+			end = moment(req.data.date).endOf('month').format();
+		}
 
 			Event.find({})
 			.or([

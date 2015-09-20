@@ -88,6 +88,76 @@
 	}
 }
 
+#humphrey-yearcal {
+
+	header {
+		height: @header-height;
+		border-bottom: 1px solid @side-hover;
+		line-height: @header-height;
+		font-size: .8em;
+		font-weight: 300;
+		text-transform: uppercase;
+		text-align: center;
+		letter-spacing: 2px;
+
+		a {
+			display: inline-block;
+			border-width: 0;
+			background-color: transparent;
+			color: @side-vague;
+			font-weight: bold;
+			font-size: 1.8em;
+			padding: 0 .5em;
+			cursor: pointer;
+			text-decoration: none;
+
+			&:hover {
+				color: @side-text;
+			}
+		}
+	}
+
+	#yearcal-months {
+		padding: 1em;
+
+		li {
+			display: inline-block;
+			width: 23.33%;
+			margin: .25em 5%;
+			padding: .2em 0 .1em;
+			border-bottom: .3em solid @side-back;	
+			text-align: center;
+			color: @side-vague;
+			cursor: pointer;
+			font-weight: 300;
+			font-size: .9em;
+
+			&:hover {
+				background-color: @side-hover;
+				border-bottom-color: @side-hover;	
+				color: @side-text;
+			}
+
+			&[data-today='yay'] {
+				border-bottom-color: @royalblue;
+			}
+		}
+
+		&.this-year {
+
+			.active {
+				background-color: @side-hover;
+				color: @side-text;
+				border-bottom-color: @side-hover;
+
+				&[data-today='yay'] {
+					border-bottom-color: @royalblue;
+				}
+			}
+		}
+	}
+}
+
 #humphrey-filter {
 	border-top: 1px solid @side-hover;
 	padding: 1.5em 0;
@@ -136,6 +206,21 @@
 		margin-left: 2.8em;
 
 		&:hover {
+			color: @side-text;
+		}
+	}
+}
+
+#humphrey-viewtoggle {
+	border-top: 1px solid @side-hover;
+	padding: 1.5em 2em;
+
+	a {
+		font-size: .8em;
+		color: @side-vague;
+		text-decoration: none;
+
+		&:hover u {
 			color: @side-text;
 		}
 	}

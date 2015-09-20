@@ -257,3 +257,211 @@
 #humphrey-weekly .day.today .event-container .event {
 	border-color: lighten(@royalblue, 40%);
 }
+
+#humphrey-monthly {
+	position: relative;
+	flex: 1;
+	display: flex;
+	overflow: hidden;
+
+	.humphrey-month {
+		width: 100%;
+		position: absolute;
+		left: 0;
+		transition: left .4s;
+
+		&.old-left { left: -100% }
+		&.old-right { left: 100% }
+		&.new-left { left: -100% }
+		&.new-right { left: 100% }
+
+		.fc-view > table {
+			width: 100%;
+			border-collapse: collapse;		
+
+			.fc-body .fc-widget-content .fc-scroller {
+				height: auto !important;
+			}
+		}
+
+		.fc-row {
+			position: relative;
+
+			table {
+				width: 100%;
+				border-collapse: collapse;
+
+				.fc-day-header {
+					padding: .3em;
+					color: @main-vague;
+					border-width: 0 1px 1px 0;
+					border-style: solid;
+					border-color: @main-line;
+					width: 100% / 7;
+
+					&:last-child {
+						border-right-width: 0;
+					}
+				}
+			}
+			
+			.fc-bg {
+				position: absolute;
+				top: 0;
+				right: 0;
+				bottom: 0;
+				left: 0;
+				z-index: 1;
+
+				table {
+					height: 100%;
+
+					.fc-day {
+						border-width: 0 1px 1px 1px;
+						border-style: solid;
+						border-color: @main-line;
+						width: 100% / 7;
+
+						&:hover {
+							background-color: @lightyellow;
+						}
+
+						&.fc-sun { border-right-width: 0; }
+
+						&.fc-other-month {
+							background-color: lighten(@main-line, 4%);
+							border-left: 1px;
+						}
+
+						&.fc-today {
+							background-color: lighten(@royalblue, 45%);
+						}
+					}
+				}
+			}
+
+			.fc-content-skeleton {
+				position: relative;
+				min-height: 7em;
+				padding-bottom: .5em;
+				z-index: 2;
+
+				.fc-day-number {
+					text-align: right;
+					padding: .2em .6em;
+					font-weight: 300;
+					font-size: .9em;
+					color: darken(@main-vague, 20%);
+					width: 100% / 7;
+
+					&.fc-today {
+						position: relative;
+
+						span {
+							position: absolute;
+							top: -.1em;
+							right: 0;
+							display: block;
+							width: 2em;
+							height: 2em;
+							background-color: @royalblue;
+							border-radius: 100%;
+							text-align: center;
+							line-height: 2em;
+							color: @main-back;
+							font-weight: bold;
+						}
+					}
+				}
+
+				.fc-event-container {
+					width: 100% / 7;
+					vertical-align: top;
+				
+					.fc-event {
+						display: block;
+						font-size: .8em;
+						cursor: pointer;
+
+						&.allday {
+							color: @main-back;
+							padding: 0 .4em .1em;
+							margin: .1em;
+							box-sizing: border-box;
+
+							.fc-time { display: none; }
+						}
+
+						&.single {
+							border-bottom: 1px solid @main-line;
+							border-top: 1px solid @main-line;
+							position: relative;
+							padding: .2em .5em .2em 1.2em;
+							line-height: 1.2em;
+							top: 1px;
+							margin-top: -1px;
+							height: 100%;
+
+							.fc-time { display: none; }
+
+							time {
+								color: lighten(@main-text, 50%);
+							}
+
+							.fc-content {
+								color: lighten(@main-text, 40%);
+								font-weight: 600;
+
+								.fc-title {
+									display: block;
+								}
+							}
+
+							.category {
+								position: absolute;
+								left: 0;
+								top: -1px;
+								bottom: -1px;
+								width: .7em;
+							}
+
+							&:hover {
+
+								.fc-content {
+									color: @main-text;
+									text-decoration: underline;
+								}
+							}
+						}
+					}
+				}
+				
+			}
+		}
+	}
+
+	.loading {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background-color: fade(@main-back, 80%);
+		pointer-events: none;
+		opacity: 0;
+		transition: opacity .2s;
+		z-index: 99;
+
+		&.active {
+			opacity: 1;
+			pointer-events: auto;
+		}
+
+		.spinner {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			margin: -1em 0 0 -1em;
+		}
+	}
+}

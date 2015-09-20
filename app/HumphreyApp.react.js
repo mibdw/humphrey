@@ -20,9 +20,11 @@ var Humphrey = React.createClass({
 		var now = moment();
 		if (this.props.params.week) now = moment().year(this.props.params.year).isoWeek(this.props.params.week);
 		now['position'] = 0;
+		var cookieView = cookie.load('view') || 'weekly';
 
 		return {
 			date: now,
+			view: cookieView,
 			events: [],
 			queue: [],
 			popup: { a: false, p: false },
@@ -36,20 +38,31 @@ var Humphrey = React.createClass({
 	},
 	componentDidMount: function () {
 		var self = this, now = moment();
-		if (this.props.params.week) now = moment().year(this.props.params.year).isoWeek(this.props.params.week);
+		if (this.props.params.period) {
+			if (this.state.view == 'weekly') {
+				now = moment().year(this.props.params.year).isoWeek(this.props.params.period);
+			} else if (this.state.view == 'monthly') {
+				now = moment().year(this.props.params.year).month(this.props.params.period);
+			}
+		}
 
 		self.fetchCategories();
 		self.handleDate(now);
-
-		$('#humphrey-wrapper').css({ 'min-height': window.innerHeight });
-		$(window).resize(function () {
-			$('#humphrey-wrapper').css({ 'min-height': window.innerHeight });
-		});
-
-		document.title = moment(this.state.date).startOf('isoWeek').format('D') + '\u2013' + moment(this.state.date).endOf('isoWeek').format('D MMMM YYYY') + ' \u00AB Humphrey';
+		
+		if (this.state.view == 'weekly') {
+			document.title = moment(this.state.date).startOf('isoWeek').format('D') + '\u2013' + moment(this.state.date).endOf('isoWeek').format('D MMMM YYYY') + ' \u00AB Humphrey';
+		} else if (this.state.view == 'monthly') {
+			document.title = moment(this.state.date).format('MMMM YYYY') + ' \u00AB Humphrey';
+			
+		}
 
 		$(window).on('popstate', function (e) {
-			var pop = moment(e.originalEvent.target.location.pathname, '/YYYY/W').add(1, 'days');
+			var pop;
+			if (this.state.view == 'weekly') {
+				pop = moment(e.originalEvent.target.location.pathname, '/YYYY/W').add(1, 'days');
+			} else if (this.state.view == 'monthly') {
+				pop = moment(e.originalEvent.target.location.pathname, '/YYYY/M');
+			}
 			self.handleDate(pop)
 		});
 	
@@ -131,7 +144,12 @@ var Humphrey = React.createClass({
 	fetchEvents: function (week, callback) {
 		var self = this;
 		this.setState({ loading: true }, function () {
-			socket.emit('events:fetch', week, function (data) {
+			var obj = {
+				date: week,
+				view: self.state.view
+			};
+
+			socket.emit('events:fetch', obj, function (data) {
 				
 				data.forEach(function (ev) {
 					ev['visible'] = true;
@@ -157,15 +175,24 @@ var Humphrey = React.createClass({
 		})
 	},
 	handleDate: function (newDate) {
-		var self = this,
+		var self = this, url;
+		if (this.state.view == 'weekly') {
 			url = moment(newDate).format('/YYYY/W');
+		} else if (this.state.view == 'monthly') {
+			url = moment(newDate).format('/YYYY/M')
+		}
 
 		window.history.pushState(self.props.params, null, url);
 
-		if (moment(newDate).isoWeekday() == 1) newDate = moment(newDate).add(1, 'days');
+		if (this.state.view == 'weekly' && moment(newDate).isoWeekday() == 1) newDate = moment(newDate).add(1, 'days');
 		self.fetchEvents(newDate, function (newEvents) {
 			self.setState({ loading: false, date: newDate, events: newEvents }, function () {
-				document.title = moment(newDate).startOf('isoWeek').format('D') + '\u2013' + moment(newDate).endOf('isoWeek').format('D MMMM YYYY') + ' \u00AB Humphrey';
+				
+				if (self.state.view == 'weekly') {
+					document.title = moment(newDate).startOf('isoWeek').format('D') + '\u2013' + moment(newDate).endOf('isoWeek').format('D MMMM YYYY') + ' \u00AB Humphrey';
+				} else if (self.state.view == 'monthly') {
+					document.title = moment(newDate).format('MMMM YYYY') + ' \u00AB Humphrey';
+				}
 			});
 		});
 	},
@@ -275,6 +302,17 @@ var Humphrey = React.createClass({
 			cookie.save('catFilter', catFilter);
 		});
 	},
+	viewToggle: function (e) {
+		e.preventDefault();
+		var self = this, date = this.state.date, newView = 'weekly';
+
+		if (this.state.view == 'weekly') newView = 'monthly';
+				
+		this.setState({ view: newView }, function () {
+			self.handleDate(date);
+			cookie.save('view', newView);
+		});		
+	},
 	render: function () {
 		var HumphreyPopup;
 		if (this.state.popup.p == 'login') HumphreyPopup = <HumphreyLogin 
@@ -317,13 +355,16 @@ var Humphrey = React.createClass({
 
 				<HumphreySidebar
 					date={this.state.date}
+					view={this.state.view}
 					catFilter={this.state.catFilter}
 					categories={this.state.categories}
 					toggleFilter={this.toggleFilter}
-					setDate={this.handleDate} />
+					setDate={this.handleDate}
+					viewToggle={this.viewToggle} />
 
 				<HumphreyBody
 					date={this.state.date}
+					view={this.state.view}
 					events={this.state.events}
 					loading={this.state.loading}
 					user={this.state.user} 
@@ -349,7 +390,7 @@ var Humphrey = React.createClass({
 var routes = (
 	<Route handler={HumphreyApp}>
 		<Route path='/' handler={Humphrey} />
-		<Route path='/:year/:week' handler={Humphrey} />
+		<Route path='/:year/:period' handler={Humphrey} />
 	</Route>
 );
 
