@@ -1398,6 +1398,10 @@ module.exports = React.createClass({displayName: "exports",
 		var correctedEvents = this.props.events;
 		correctedEvents.forEach(function (ev) {
 			if (ev.allday && ev.end) ev.end = moment(ev.end).add(1, 'days').format();
+			if (!ev.allday) {
+				ev.start = ev.start = moment(ev.start).format();
+				if (ev.end) ev.end = ev.end = moment(ev.end).format();
+			}
 		}); 
 
 		$('#' + monthId).fullCalendar({
@@ -1435,7 +1439,7 @@ module.exports = React.createClass({displayName: "exports",
 	componentWillReceiveProps: function (nextProps) {
 		var self = this, monthId = moment(self.props.date).format('YYYY-MM');
 		$('#' + monthId).fullCalendar('refetchEvents');
-		
+
 		setTimeout(function () {
 			$('#humphrey-monthly').css('min-height', $('#' + monthId).height());
 		}, 1);
