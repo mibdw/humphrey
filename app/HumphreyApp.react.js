@@ -145,7 +145,7 @@ var Humphrey = React.createClass({
 		var self = this;
 		this.setState({ loading: true }, function () {
 			var obj = {
-				date: week,
+				date: moment(week).format(),
 				view: self.state.view
 			};
 
@@ -185,6 +185,7 @@ var Humphrey = React.createClass({
 		window.history.pushState(self.props.params, null, url);
 
 		if (this.state.view == 'weekly' && moment(newDate).isoWeekday() == 1) newDate = moment(newDate).add(1, 'days');
+
 		self.fetchEvents(newDate, function (newEvents) {
 			self.setState({ loading: false, date: newDate, events: newEvents }, function () {
 				

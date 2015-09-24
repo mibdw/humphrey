@@ -146,7 +146,7 @@ var Humphrey = React.createClass({displayName: "Humphrey",
 		var self = this;
 		this.setState({ loading: true }, function () {
 			var obj = {
-				date: week,
+				date: moment(week).format(),
 				view: self.state.view
 			};
 
@@ -186,6 +186,7 @@ var Humphrey = React.createClass({displayName: "Humphrey",
 		window.history.pushState(self.props.params, null, url);
 
 		if (this.state.view == 'weekly' && moment(newDate).isoWeekday() == 1) newDate = moment(newDate).add(1, 'days');
+
 		self.fetchEvents(newDate, function (newEvents) {
 			self.setState({ loading: false, date: newDate, events: newEvents }, function () {
 				
@@ -681,7 +682,9 @@ module.exports = React.createClass({displayName: "exports",
 			)
 
 			if (moment().startOf('isoWeek').isSame(startWeek, 'week')) styles = { display: 'none'}
+
 		} else if (this.props.view == 'monthly') {
+			
 			var next = moment(this.props.date).add(1, 'months').format('YYYY-MM-DD'),
 				prev = moment(this.props.date).subtract(1, 'months').format('YYYY-MM-DD');
 
@@ -1136,10 +1139,7 @@ module.exports = React.createClass({displayName: "exports",
 		var self = this;
 		this.setState({ loading: true }, function () {
 			socket.emit('events:detail', {_id: self.props.detail}, function (response) {
-				self.setState({ detail: response, loading: false } ,function () {
-					console.log(self.state.detail);
-				});
-				
+				self.setState({ detail: response, loading: false });
 			});
 		})
 	},
@@ -1411,6 +1411,9 @@ module.exports = React.createClass({displayName: "exports",
 			events: function (start, end, timezone, callback) {
 				var events = _.filter(correctedEvents, function (ev) { return ev.visible; });
 				callback(events);
+			},
+			dayRender: function (date, cell) {
+				$(cell).prepend('<span class="bling"></span>')
 			},
 			eventRender: function (event, element) {
 				if (event.allday) {

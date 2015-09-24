@@ -335,6 +335,14 @@
 
 						&.fc-today {
 							background-color: lighten(@royalblue, 45%);
+							vertical-align: top;
+
+							.bling {
+								display: block;
+								height: .4em;
+								background-color: @royalblue;
+								margin: 0 -1px;
+							}
 						}
 					}
 				}
@@ -343,7 +351,7 @@
 			.fc-content-skeleton {
 				position: relative;
 				min-height: 7em;
-				padding-bottom: .5em;
+				padding-bottom: 1em;
 				z-index: 2;
 
 				.fc-day-number {
@@ -356,64 +364,73 @@
 
 					&.fc-today {
 						position: relative;
-
-						span {
-							position: absolute;
-							top: -.1em;
-							right: 0;
-							display: block;
-							width: 2em;
-							height: 2em;
-							background-color: @royalblue;
-							border-radius: 100%;
-							text-align: center;
-							line-height: 2em;
-							color: @main-back;
-							font-weight: bold;
-						}
+						top: .1em;
+						font-weight: 900;
+						color: @main-text;
 					}
+				}
+
+				& > table {
+					table-layout: fixed;
 				}
 
 				.fc-event-container {
 					width: 100% / 7;
+					max-width: 100% / 7;
 					vertical-align: top;
 				
 					.fc-event {
 						display: block;
 						font-size: .8em;
 						cursor: pointer;
+						margin-bottom: 2px;
+
 
 						&.allday {
 							color: @main-back;
 							padding: 0 .4em .1em;
-							margin: .1em;
 							box-sizing: border-box;
+							margin-left: 3px;
+							margin-right: 3px;
+
+							&.fc-not-end { margin-right: 0; }
+							&.fc-not-start { margin-left: 0; }
 
 							.fc-time { display: none; }
+
+							&.hover {
+								opacity: .8;
+							}
 						}
 
 						&.single {
 							border-bottom: 1px solid @main-line;
 							border-top: 1px solid @main-line;
 							position: relative;
-							padding: .2em .5em .2em 1.2em;
+							padding: .4em .5em .4em 1.2em;
 							line-height: 1.2em;
-							top: 1px;
-							margin-top: -1px;
-							height: 100%;
+							top: 3px;
+							margin-top: -3px;
+							max-width: 100%;
+							overflow: hidden;
+							white-space: nowrap;
+							text-overflow: ellipsis;
 
 							.fc-time { display: none; }
 
 							time {
 								color: lighten(@main-text, 50%);
+								font-size: .9em;
+								display: inline;
 							}
 
 							.fc-content {
 								color: lighten(@main-text, 40%);
 								font-weight: 600;
+								display: inline;
 
 								.fc-title {
-									display: block;
+									display: inline;
 								}
 							}
 
@@ -434,8 +451,7 @@
 							}
 						}
 					}
-				}
-				
+				}				
 			}
 		}
 	}

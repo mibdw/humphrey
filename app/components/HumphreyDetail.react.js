@@ -27,10 +27,7 @@ module.exports = React.createClass({
 		var self = this;
 		this.setState({ loading: true }, function () {
 			socket.emit('events:detail', {_id: self.props.detail}, function (response) {
-				self.setState({ detail: response, loading: false } ,function () {
-					console.log(self.state.detail);
-				});
-				
+				self.setState({ detail: response, loading: false });
 			});
 		})
 	},

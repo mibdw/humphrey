@@ -25,6 +25,9 @@ module.exports = React.createClass({
 				var events = _.filter(correctedEvents, function (ev) { return ev.visible; });
 				callback(events);
 			},
+			dayRender: function (date, cell) {
+				$(cell).prepend('<span class="bling"></span>')
+			},
 			eventRender: function (event, element) {
 				if (event.allday) {
 					$(element).addClass('allday');

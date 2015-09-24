@@ -5,26 +5,28 @@ module.exports = {
 	fetch: function (req) {
 		var start, end;
 
+		console.log(req.data.date);
+
 		if (req.data.view == 'weekly') {
 			start = moment(req.data.date).startOf('isoweek').format(),
 			end = moment(req.data.date).endOf('isoweek').format();
 		} else if (req.data.view == 'monthly') {
-			start = moment(req.data.date).startOf('month').format(),
-			end = moment(req.data.date).endOf('month').format();
+			start = moment(req.data.date).startOf('month').subtract(1, 'months').format(),
+			end = moment(req.data.date).endOf('month').add(1, 'months').format();
 		}
 
-			Event.find({})
-			.or([
-				{ start: { $gt: start, $lte: end }}, 
-				{ end: { $gt: start, $lte: end }}, 
-				{ start: { $lt: start }, end: { $gt: end }}
-			])
-			.populate('user', 'name username')
-			.populate('category')
-			.exec(function (err, eventData) {
-			if (err) console.log(err);	
-				req.io.respond(eventData);
-			});
+		Event.find({})
+		.or([
+			{ start: { $gt: start, $lte: end }}, 
+			{ end: { $gt: start, $lte: end }}, 
+			{ start: { $lt: start }, end: { $gt: end }}
+		])
+		.populate('user', 'name username')
+		.populate('category')
+		.exec(function (err, eventData) {
+		if (err) console.log(err);	
+			req.io.respond(eventData);
+		});
 	},
 	detail: function (req) {
 		Event.findById(req.data._id)

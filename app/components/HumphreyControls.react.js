@@ -48,7 +48,9 @@ module.exports = React.createClass({
 			)
 
 			if (moment().startOf('isoWeek').isSame(startWeek, 'week')) styles = { display: 'none'}
+
 		} else if (this.props.view == 'monthly') {
+			
 			var next = moment(this.props.date).add(1, 'months').format('YYYY-MM-DD'),
 				prev = moment(this.props.date).subtract(1, 'months').format('YYYY-MM-DD');
 
