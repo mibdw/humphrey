@@ -143,8 +143,9 @@ var Humphrey = React.createClass({displayName: "Humphrey",
 		});
 	},
 	fetchEvents: function (week, callback) {
-		var self = this;
+		var self = this, month = moment(week).month(), year = moment(week).year();
 		this.setState({ loading: true }, function () {
+
 			var obj = {
 				date: moment(week).format(),
 				view: self.state.view
@@ -155,7 +156,17 @@ var Humphrey = React.createClass({displayName: "Humphrey",
 				data.forEach(function (ev) {
 					ev['visible'] = true;
 					if (self.state.catFilter.length > 0 && self.state.catFilter.indexOf(ev.category._id) == -1) ev.visible = false;
+
+					if (ev.recursion == 'monthly') {
+						ev.start = moment(ev.start).month(month).year(year).format();
+						if (ev.end) ev.end = moment(ev.end).month(month).year(year).format();
+					} else if (ev.recursion == 'yearly') {
+						ev.start = moment(ev.start).year(year).format();
+						if (ev.end) ev.end = moment(ev.end).year(year).format();						
+					}
 				});
+
+				console.log(data);
 
 				setTimeout(function () { callback(data); }, 300);
 			});
@@ -964,7 +975,7 @@ module.exports = React.createClass({displayName: "exports",
 
 									React.createElement("label", {className: "create-time", htmlFor: "create-recursion"}, "Recursion"), 
 									React.createElement("div", {className: "set-time"}, 
-										React.createElement("select", {id: "create-recursion", name: "recursion", value: ev.recursion, onChange: this.handleChange, disabled: "disbabled"}, 
+										React.createElement("select", {id: "create-recursion", name: "recursion", value: ev.recursion, onChange: this.handleChange}, 
 											React.createElement("option", {value: "once"}, "Once"), 
 											React.createElement("option", {value: "monthly"}, "Monthly"), 
 											React.createElement("option", {value: "yearly"}, "Yearly")
@@ -1419,12 +1430,14 @@ module.exports = React.createClass({displayName: "exports",
 				if (event.allday) {
 					$(element).addClass('allday');
 					$(element).css('background-color', event.category.color);
+					$(element).attr('title', event.title);
 				} else {
 					var time = moment(event.start).format('HH:mm');
 					if (event.end) time = moment(event.start).format('HH:mm') + ' \u2013 '  + moment(event.end).format('HH:mm');
 
 					$(element).addClass('single');
-					$(element).prepend('<span class="category" style="background-color:' + event.category.color +'"></span><time>' + time + '</time>')
+					$(element).prepend('<span class="category" style="background-color:' + event.category.color +'"></span><time>' + time + '</time>');
+					$(element).attr('title', time + ', ' + event.title);
 				}
 			},
 			eventClick: function (event, jsEvent, view) {
@@ -2069,7 +2082,7 @@ module.exports = React.createClass({displayName: "exports",
 
 								React.createElement("label", {className: "update-time", htmlFor: "update-recursion"}, "Recursion"), 
 								React.createElement("div", {className: "set-time"}, 
-									React.createElement("select", {id: "update-recursion", name: "recursion", value: ev.recursion, onChange: this.handleChange, disabled: "disabled"}, 
+									React.createElement("select", {id: "update-recursion", name: "recursion", value: ev.recursion, onChange: this.handleChange}, 
 										React.createElement("option", {value: "once"}, "Once"), 
 										React.createElement("option", {value: "monthly"}, "Monthly"), 
 										React.createElement("option", {value: "yearly"}, "Yearly")

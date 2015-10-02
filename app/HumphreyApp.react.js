@@ -142,8 +142,9 @@ var Humphrey = React.createClass({
 		});
 	},
 	fetchEvents: function (week, callback) {
-		var self = this;
+		var self = this, month = moment(week).month(), year = moment(week).year();
 		this.setState({ loading: true }, function () {
+
 			var obj = {
 				date: moment(week).format(),
 				view: self.state.view
@@ -154,7 +155,17 @@ var Humphrey = React.createClass({
 				data.forEach(function (ev) {
 					ev['visible'] = true;
 					if (self.state.catFilter.length > 0 && self.state.catFilter.indexOf(ev.category._id) == -1) ev.visible = false;
+
+					if (ev.recursion == 'monthly') {
+						ev.start = moment(ev.start).month(month).year(year).format();
+						if (ev.end) ev.end = moment(ev.end).month(month).year(year).format();
+					} else if (ev.recursion == 'yearly') {
+						ev.start = moment(ev.start).year(year).format();
+						if (ev.end) ev.end = moment(ev.end).year(year).format();						
+					}
 				});
+
+				console.log(data);
 
 				setTimeout(function () { callback(data); }, 300);
 			});

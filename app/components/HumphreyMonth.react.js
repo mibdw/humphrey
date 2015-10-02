@@ -32,12 +32,14 @@ module.exports = React.createClass({
 				if (event.allday) {
 					$(element).addClass('allday');
 					$(element).css('background-color', event.category.color);
+					$(element).attr('title', event.title);
 				} else {
 					var time = moment(event.start).format('HH:mm');
 					if (event.end) time = moment(event.start).format('HH:mm') + ' \u2013 '  + moment(event.end).format('HH:mm');
 
 					$(element).addClass('single');
-					$(element).prepend('<span class="category" style="background-color:' + event.category.color +'"></span><time>' + time + '</time>')
+					$(element).prepend('<span class="category" style="background-color:' + event.category.color +'"></span><time>' + time + '</time>');
+					$(element).attr('title', time + ', ' + event.title);
 				}
 			},
 			eventClick: function (event, jsEvent, view) {

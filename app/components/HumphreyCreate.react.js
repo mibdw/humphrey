@@ -232,7 +232,7 @@ module.exports = React.createClass({
 
 									<label className='create-time' htmlFor='create-recursion'>Recursion</label>
 									<div className='set-time'>
-										<select id='create-recursion' name='recursion' value={ev.recursion} onChange={this.handleChange} disabled='disbabled'>
+										<select id='create-recursion' name='recursion' value={ev.recursion} onChange={this.handleChange}>
 											<option value='once'>Once</option>
 											<option value='monthly'>Monthly</option>
 											<option value='yearly'>Yearly</option>

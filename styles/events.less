@@ -383,8 +383,11 @@
 						display: block;
 						font-size: .8em;
 						cursor: pointer;
-						margin-bottom: 2px;
-
+						margin-bottom: 1px;
+						max-width: 100%;
+						overflow: hidden;
+						white-space: nowrap;
+						text-overflow: ellipsis;
 
 						&.allday {
 							color: @main-back;
@@ -392,29 +395,27 @@
 							box-sizing: border-box;
 							margin-left: 3px;
 							margin-right: 3px;
+							z-index: 2;
 
 							&.fc-not-end { margin-right: 0; }
 							&.fc-not-start { margin-left: 0; }
 
 							.fc-time { display: none; }
 
-							&.hover {
+							&:hover {
 								opacity: .8;
 							}
 						}
 
 						&.single {
+							z-index: 1;
 							border-bottom: 1px solid @main-line;
 							border-top: 1px solid @main-line;
 							position: relative;
-							padding: .4em .5em .4em 1.2em;
+							padding: .3em .5em .3em 1.2em;
 							line-height: 1.2em;
 							top: 3px;
 							margin-top: -3px;
-							max-width: 100%;
-							overflow: hidden;
-							white-space: nowrap;
-							text-overflow: ellipsis;
 
 							.fc-time { display: none; }
 

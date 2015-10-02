@@ -7,4 +7,4 @@ To do:
 - ~~URL Router~~
 - ~~Save filter in cookies~~
 - ~~Monthly views~~
-- Recurring events
+- ~~Recurring events~~
