@@ -1230,6 +1230,11 @@ module.exports = React.createClass({displayName: "exports",
 							React.createElement("dt", null, React.createElement("i", {style: {backgroundColor: detail.category.color}}), " ", detail.category.name)
 						), 
 
+						React.createElement("div", {className: detail.recursion != 'once' ? 'dl-row' : 'dl-row hide'}, 
+							React.createElement("dd", null, "Recursion"), 
+							React.createElement("dt", {style: { textTransform: 'capitalize'}}, detail.recursion)
+						), 
+
 						React.createElement("div", {className: detail.note ? 'dl-row' : 'dl-row hide'}, 
 							React.createElement("dd", null, "Note"), 
 							React.createElement("dt", null, detail.note)

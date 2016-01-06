@@ -26,12 +26,12 @@ module.exports = {
 			{ recursion: 'once', start: { $gt: start, $lte: end }}, 
 			{ recursion: 'once', end: { $gt: start, $lte: end }}, 
 			{ recursion: 'once', start: { $lt: start }, end: { $gt: end }},
-			{ recursion: 'monthly', startDay: { $in: dayRange }},
-			{ recursion: 'monthly', endDay: { $in: dayRange }},
-			{ recursion: 'monthly', startDay: { $lt: moment(start).date() }, endDay: { $gt: moment(end).date() }},
-			{ recursion: 'yearly', startMonth: { $in: monthRange }, startDay: { $in: dayRange }},
-			{ recursion: 'yearly', endMonth: { $in: monthRange }, endDay: { $in: dayRange }},
-			{ recursion: 'yearly', startDay: { $lt: moment(start).date() }, endDay: { $gt: moment(end).date() }},			
+			{ recursion: 'monthly', startDay: { $in: dayRange }, start: { $gte: start}},
+			{ recursion: 'monthly', endDay: { $in: dayRange }, start: { $gte: start}},
+			{ recursion: 'monthly', startDay: { $lt: moment(start).date() }, endDay: { $gt: moment(end).date() }, start: { $gt: start}},
+			{ recursion: 'yearly', startMonth: { $in: monthRange }, startDay: { $in: dayRange }, start: { $gt: start}},
+			{ recursion: 'yearly', endMonth: { $in: monthRange }, endDay: { $in: dayRange }, start: { $gt: start}},
+			{ recursion: 'yearly', startDay: { $lt: moment(start).date() }, endDay: { $gt: moment(end).date() }, start: { $gt: start}},			
 		])
 		.populate('user', 'name username')
 		.populate('category')

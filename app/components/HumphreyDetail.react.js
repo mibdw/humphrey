@@ -107,6 +107,11 @@ module.exports = React.createClass({
 							<dt><i style={{backgroundColor: detail.category.color}}></i> {detail.category.name}</dt>
 						</div>
 
+						<div className={detail.recursion != 'once' ? 'dl-row' : 'dl-row hide'}>
+							<dd>Recursion</dd> 
+							<dt style={{ textTransform: 'capitalize' }}>{detail.recursion}</dt>
+						</div>
+
 						<div className={detail.note ? 'dl-row' : 'dl-row hide'}>
 							<dd>Note</dd>
 							<dt>{detail.note}</dt>
